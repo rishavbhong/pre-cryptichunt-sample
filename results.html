@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Results</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 50px;
+            animation: fadeIn 1s ease-out;
+        }
+        h2 {
+            color: #3498db;
+        }
+        p {
+            margin-bottom: 10px;
+        }
+        .result-container {
+            background-color: #ecf0f1;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <h2>Quiz Results</h2>
+    
+    <div class="result-container">
+        <p>Correct Answers: <span id="correctCount"></span></p>
+        <p>Incorrect Answers: <span id="incorrectCount"></span></p>
+        <p>Skipped Questions: <span id="skippedCount"></span></p>
+        <p>Total Attempts: <span id="attemptsCount"></span></p>
+    </div>
+
+    <script>
+        // Fetch data from sessionStorage
+        const correctCount = sessionStorage.getItem('correctAnswersCount') || 0;
+        const incorrectCount = sessionStorage.getItem('incorrectAnswersCount') || 0;
+        const skippedCount = sessionStorage.getItem('skippedQuestionsCount') || 0;
+        const attemptsCount = sessionStorage.getItem('attemptsCount') || 0;
+
+        // Display the results
+        document.getElementById('correctCount').innerText = correctCount;
+        document.getElementById('incorrectCount').innerText = incorrectCount;
+        document.getElementById('skippedCount').innerText = skippedCount;
+        document.getElementById('attemptsCount').innerText = attemptsCount;
+    </script>
+</body>
+</html>

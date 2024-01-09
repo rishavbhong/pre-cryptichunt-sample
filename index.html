@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Question and Answer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 50px;
+            animation: fadeIn 1s ease-out;
+            transition: background-color 0.5s;
+            background-color: #f0f0f0;
+        }
+        #question-container {
+            margin-bottom: 20px;
+            animation: slideIn 1s ease-out;
+        }
+        #result, #error {
+            display: none;
+            margin-top: 20px;
+        }
+        #result {
+            color: green;
+            animation: fadeIn 1s ease-out;
+        }
+        #error {
+            color: red;
+            animation: fadeIn 1s ease-out;
+        }
+        button {
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .question-button {
+            margin: 5px;
+            padding: 8px 15px;
+            font-size: 14px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            background-color: #3498db;
+            color: white;
+            transition: background-color 0.3s;
+        }
+        .question-button:hover {
+            background-color: #2980b9;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes slideIn {
+            from { transform: translateY(-50px); }
+            to { transform: translateY(0); }
+        }
+        @keyframes highlightCorrect {
+            0% { background-color: #4CAF50; }
+            50% { background-color: #8eff8e; }
+            100% { background-color: #4CAF50; }
+        }
+    </style>
+</head>
+<body>
+    <div id="question-container">
+        <h4 id="question">Question 1: What is the capital of France?</h4>
+        <input type="text" id="answer" placeholder="Your Answer">
+        <br>
+        <button onclick="checkAnswer()">Submit Answer</button>
+    </div>
+    
+    <div id="result"></div>
+    <div id="error"></div>
+
+    <div id="question-navigation">
+        <!-- Dynamically generated question buttons will be placed here -->
+    </div>
+
+    <button id="submitQuizBtn" onclick="submitQuiz()" style="margin-top: 20px;">Submit Quiz</button>
+
+    <script>
+        const questions = [
+            "What is the capital of France?",
+            "Who is the current president of the United States?",
+            "What is the largest planet in our solar system?"
+            // Add more questions as needed
+        ];
+
+        let currentQuestionIndex = 0;
+        let correctAnswersCount = 0;
+        let incorrectAnswersCount = 0;
+        let skippedQuestionsCount = 0;
+        let attemptsCount = 0;
+
+        function showQuestion(index) {
+            document.getElementById('question').innerHTML = `Question ${index + 1}: ${questions[index]}`;
+            document.getElementById('answer').value = '';
+            document.getElementById('result').style.display = 'none';
+            document.getElementById('error').style.display = 'none';
+
+            // Change background color dynamically
+            document.body.style.backgroundColor = getRandomColor();
+        }
+
+        function checkAnswer() {
+            attemptsCount++;
+
+            var userAnswer = document.getElementById('answer').value.toLowerCase();
+            
+            if (userAnswer === getCorrectAnswer(currentQuestionIndex)) {
+                correctAnswersCount++;
+                document.getElementById('result').innerHTML = 'Correct!';
+                document.getElementById('result').style.display = 'block';
+                document.getElementById('error').style.display = 'none';
+
+                // Move to the next question after a brief delay
+                setTimeout(() => {
+                    currentQuestionIndex++;
+                    if (currentQuestionIndex < questions.length) {
+                        showQuestion(currentQuestionIndex);
+                    } else {
+                        // Quiz completed, store data and redirect to the results page
+                        sessionStorage.setItem('correctAnswersCount', correctAnswersCount);
+                        sessionStorage.setItem('incorrectAnswersCount', incorrectAnswersCount);
+                        sessionStorage.setItem('skippedQuestionsCount', skippedQuestionsCount);
+                        sessionStorage.setItem('attemptsCount', attemptsCount);
+                        window.location.href = 'results.html';
+                    }
+                }, 2000);
+            } else {
+                incorrectAnswersCount++;
+                document.getElementById('error').innerHTML = 'Incorrect. Please try again.';
+                document.getElementById('error').style.display = 'block';
+                document.getElementById('result').style.display = 'none';
+            }
+        }
+
+        function submitQuiz() {
+            // Manually submit the quiz before attempting the last question
+            sessionStorage.setItem('correctAnswersCount', correctAnswersCount);
+            sessionStorage.setItem('incorrectAnswersCount', incorrectAnswersCount);
+            sessionStorage.setItem('skippedQuestionsCount', skippedQuestionsCount);
+            sessionStorage.setItem('attemptsCount', attemptsCount);
+            window.location.href = 'results.html';
+        }
+
+        function getCorrectAnswer(index) {
+            // Add the correct answers corresponding to each question
+            const correctAnswers = ["paris", "joe biden", "jupiter"];
+            return correctAnswers[index];
+        }
+
+        function generateQuestionButtons() {
+            const questionNavigation = document.getElementById('question-navigation');
+            questionNavigation.innerHTML = '';
+
+            for (let i = 0; i < questions.length; i++) {
+                const button = document.createElement('button');
+                button.innerText = `Question ${i + 1}`;
+                button.className = 'question-button';
+                button.onclick = function() {
+                    currentQuestionIndex = i;
+                    showQuestion(currentQuestionIndex);
+                };
+                questionNavigation.appendChild(button);
+            }
+        }
+
+        // Initial setup
+        showQuestion(currentQuestionIndex);
+        generateQuestionButtons();
+
+        // Function to generate a random color
+        function getRandomColor() {
+            const letters = '0123456789ABCDEF';
+            let color = '#';
+            for (let i = 0; i < 6; i++) {
+                color += letters[Math.floor(Math.random() * 16)];
+            }
+            return color;
+        }
+    </script>
+</body>
+</html>
